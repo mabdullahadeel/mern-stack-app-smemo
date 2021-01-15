@@ -7,25 +7,35 @@ import { createPost, updatePost } from '../../redux/actions/posts';
 
 function Forms({ currentId, setCurrentId }) {
     const [postData, setPostDate] = useState({
-        creator: '', title: '', message: '', tags: '', selectedFile: ''
+        creator: '', title: '', message: '', tags: [], selectedFile: ''
     });
     const dispatch = useDispatch();
     const classes = useStyles();
     const post = useSelector((state) => currentId ? state.posts.find((p) => p._id === currentId) : null);
-
+    const user = useSelector((state) => state.user)
     useEffect(() => {
         if (post) setPostDate(post)
     }, [post])
 
+    const formValidation = () => {
+        if (postData.title && postData.message && postData.tags) return true
+        return false
+    }
+
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        if (currentId) {
-            dispatch(updatePost(currentId, postData));
-        } else {
-            dispatch(createPost(postData));
-        }
-        clear();
+        console.log(postData);
+        console.log(formValidation())
+        // if (formValidation) {
+        //     if (currentId) {
+        //         dispatch(updatePost(currentId, postData));
+        //     } else {
+        //         dispatch(createPost({ ...postData, creator: user.username }));
+        //     }
+        //     clear();
+        // } else {
+        //     console.log("Form Data not complete");
+        // }
 
     };
 
@@ -44,8 +54,10 @@ function Forms({ currentId, setCurrentId }) {
                 <Typography variant="h6">{currentId ? "Edit" : "Create"} Memory</Typography>
                 <TextField
                     name="creator" variant="outlined" label="Creator" fullWidth className={classes.inputs}
-                    value={postData.creator}
-                    onChange={(e) => setPostDate({ ...postData, creator: e.target.value })} />
+                    value={user.username}
+                    disabled={true}
+
+                />
                 <TextField
                     name="title" variant="outlined" label="Title" fullWidth className={classes.inputs}
                     value={postData.title}
